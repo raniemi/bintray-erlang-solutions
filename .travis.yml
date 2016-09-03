@@ -1,0 +1,6 @@
+script:
+  - ./upload-to-bintray
+
+notifications:
+  recipients:
+    - dev@lone-cyprus.com

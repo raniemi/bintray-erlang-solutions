@@ -1,0 +1,88 @@
+#!/bin/bash
+set -e
+
+USERNAME=${BINTRAY_USERNAME:-`whoami`}
+REPOSITORY=${BINTRAY_REPOSITORY:-erlang-solutions-unofficial-mirror}
+
+if [[ -z $USERNAME || -z $REPOSITORY || -z $BINTRAY_API_TOKEN ]]; then
+  (>&2 echo "ERROR: Expected the BINTRAY_USERNAME, BINTRAY_REPOSITORY, and BINTRAY_API_TOKEN environment variables to be given!" )
+  exit 1
+fi
+
+API_KEY=$BINTRAY_API_TOKEN
+
+BINTRAY_URL=https://api.bintray.com
+BINTRAY_CONTENT_URL=$BINTRAY_URL/content
+BINTRAY_SEARCH_URL=$BINTRAY_URL/search
+
+ES_URL_PREFIX=https://packages.erlang-solutions.com/erlang
+DEB_COMPONENT=contrib
+
+function download_upload_file() {
+  local package_name=$1
+  local package_version=$2
+  local linux_distribution=$3
+  local distribution=$4
+  local architecture=$5
+  local file_path="${package_name}_${package_version}-1~${linux_distribution}~${distribution}_${architecture}.deb"
+
+  case "$package_name" in
+    elixir)
+      es_url_infix=elixir/FLAVOUR_2_download
+      ;;
+    esl-erlang)
+      es_url_infix=esl-erlang/FLAVOUR_1_general
+      ;;
+    *)
+      echo "Package '$package_name' is not recognized"
+      exit 1
+  esac
+
+  local source_url=$ES_URL_PREFIX/$es_url_infix/$file_path
+  local target_url=$BINTRAY_CONTENT_URL/$USERNAME/$REPOSITORY/$package_name/$package_version/$file_path
+
+  output=`curl -X GET --silent --fail "$BINTRAY_SEARCH_URL/file?name=${file_path/\~/?}&subject=${USERNAME}&repo=${REPOSITORY}"`
+  if [ "${#output}" -eq 2 ]; then
+    
+    if curl --output /dev/null --silent --head --fail "$source_url"; then
+      if [ ! -f $file_path ]; then
+        echo "Downloading from $source_url . . ."
+        wget $source_url
+      fi
+      
+      if [ -f $file_path ]; then
+        echo "Uploading to $target_url . . ."
+        local target_api_url="$target_url;deb_distribution=$distribution;deb_component=$DEB_COMPONENT;deb_architecture=$architecture;publish=1"
+        curl -X PUT -T $file_path -u$USERNAME:$API_KEY $target_api_url
+      fi
+    fi
+  else
+    echo "$file_path has already been published"
+  fi
+}
+
+function download_upload_ubuntu_file() {
+
+  local package_name=$1
+  local package_version=$2
+
+  local linux_distribution=ubuntu
+  local distributions=( `cat ubuntu_releases.txt` ) 
+  local architectures=( amd64 )
+ 
+  for distribution in "${distributions[@]}"; do
+    for architecture in "${architectures[@]}"; do
+      download_upload_file $package_name $package_version $linux_distribution $distribution $architecture
+    done
+  done
+}
+
+elixir_versions=( `cat elixir_versions.txt` )
+for elixir_version in "${elixir_versions[@]}"; do
+  download_upload_ubuntu_file 'elixir' $elixir_version
+done
+
+erlang_versions=( `cat erlang_versions.txt` )
+for erlang_version in "${erlang_versions[@]}"; do
+  download_upload_ubuntu_file 'esl-erlang' $erlang_version
+done

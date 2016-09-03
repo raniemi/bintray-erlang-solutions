@@ -1,0 +1,7 @@
+yakkety
+xenial
+wily
+vivid
+utopic
+trusty
+precise
