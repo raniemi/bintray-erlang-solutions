@@ -1,14 +1,13 @@
 #!/bin/bash
 set -e
 
-USERNAME=${BINTRAY_USERNAME:-`whoami`}
-REPOSITORY=${BINTRAY_REPOSITORY:-erlang-solutions-unofficial-mirror}
-
-if [[ -z $USERNAME || -z $REPOSITORY || -z $BINTRAY_API_TOKEN ]]; then
+if [[ -z $BINTRAY_USERNAME || -z $BINTRAY_REPOSITORY || -z $BINTRAY_API_TOKEN ]]; then
   (>&2 echo "ERROR: Expected the BINTRAY_USERNAME, BINTRAY_REPOSITORY, and BINTRAY_API_TOKEN environment variables to be given!" )
   exit 1
 fi
 
+USERNAME=$BINTRAY_USERNAME
+REPOSITORY=$BINTRAY_REPOSITORY
 API_KEY=$BINTRAY_API_TOKEN
 
 BINTRAY_URL=https://api.bintray.com
