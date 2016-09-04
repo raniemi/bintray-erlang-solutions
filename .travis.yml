@@ -4,8 +4,7 @@ services:
   - docker
 
 env:
-  - OWNER=raniemi
-  - PROJECT=bintray-erlang-solutions
+  - OWNER=raniemi PROJECT=bintray-erlang-solutions
 
 before_install:
   - ./bin/docker-build

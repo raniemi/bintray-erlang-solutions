@@ -12,6 +12,9 @@ docker run \
        -it \
        --rm \
        --name $PROJECT \
+       -e BINTRAY_USERNAME=$BINTRAY_USERNAME \
+       -e BINTRAY_REPOSITORY=$BINTRAY_REPOSITORY \
+       -e BINTRAY_API_TOKEN=$BINTRAY_API_TOKEN \
        -v "$PWD":$CONTAINER_HOME \
        -w $CONTAINER_HOME \
        $REPOSITORY \
