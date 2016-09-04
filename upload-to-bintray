@@ -67,7 +67,23 @@ function download_upload_ubuntu_file() {
 
   local linux_distribution=ubuntu
   local distributions=( `cat ubuntu_releases.txt` ) 
-  local architectures=( amd64 )
+  local architectures=( amd64 i386 )
+ 
+  for distribution in "${distributions[@]}"; do
+    for architecture in "${architectures[@]}"; do
+      download_upload_file $package_name $package_version $linux_distribution $distribution $architecture
+    done
+  done
+}
+
+function download_upload_debian_file() {
+
+  local package_name=$1
+  local package_version=$2
+
+  local linux_distribution=debian
+  local distributions=( `cat debian_releases.txt` ) 
+  local architectures=( amd64 i386 )
  
   for distribution in "${distributions[@]}"; do
     for architecture in "${architectures[@]}"; do
@@ -79,9 +95,11 @@ function download_upload_ubuntu_file() {
 elixir_versions=( `cat elixir_versions.txt` )
 for elixir_version in "${elixir_versions[@]}"; do
   download_upload_ubuntu_file 'elixir' $elixir_version
+  download_upload_debian_file 'elixir' $elixir_version
 done
 
 erlang_versions=( `cat erlang_versions.txt` )
 for erlang_version in "${erlang_versions[@]}"; do
   download_upload_ubuntu_file 'esl-erlang' $erlang_version
+  download_upload_debian_file 'esl-erlang' $erlang_version
 done

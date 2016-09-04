@@ -3,6 +3,4 @@ This repository is used for copying [Erlang Solutions' packages](https://www.erl
 
 The actual copy is performed by [Travis CI](https://travis-ci.org/raniemi/bintray-erlang-solutions) when a push is made to master.
 
-Currently only [Erlang](https://www.erlang.org/) and [Elixir](http://elixir-lang.org/) packaging for [Ubuntu](http://www.ubuntu.com/) releases are supported.
-
-
+Currently only [Erlang](https://www.erlang.org/) and [Elixir](http://elixir-lang.org/) packaging for [Ubuntu](http://www.ubuntu.com/) and [Debian](https://www.debian.org/) releases are supported.
