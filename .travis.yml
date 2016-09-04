@@ -1,5 +1,17 @@
+sudo: required
+
+services:
+  - docker
+
+env:
+  - OWNER=raniemi
+  - PROJECT=bintray-erlang-solutions
+
+before_install:
+  - ./bin/docker-build
+
 script:
-  - ./upload-to-bintray
+  - ./bin/docker-run "./upload-to-bintray"
 
 notifications:
   recipients:

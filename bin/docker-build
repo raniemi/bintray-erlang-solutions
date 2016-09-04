@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+OWNER=${OWNER:-raniemi}
+PROJECT=${OWNER:-bintray-erlang-solutions}
+REPOSITORY=$OWNER/$PROJECT
+
+docker build -t $REPOSITORY .
