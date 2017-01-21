@@ -23,7 +23,9 @@ function download_upload_file() {
   local linux_distribution=$3
   local distribution=$4
   local architecture=$5
-  local file_path="${package_name}_${package_version}-1~${linux_distribution}~${distribution}_${architecture}.deb"
+  local package_version_suffix=$(test "${package_version#*-}" != "$package_version" && echo "" || echo "-1")
+
+  local file_path="${package_name}_${package_version}${package_version_suffix}~${linux_distribution}~${distribution}_${architecture}.deb"
 
   case "$package_name" in
     elixir)
